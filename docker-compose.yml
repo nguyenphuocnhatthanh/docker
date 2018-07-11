@@ -1,0 +1,59 @@
+version: '2.0'
+services:
+  gallery:
+    build:
+      context: gallery
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9090:9090"
+    links:
+      - db
+      - redis
+    volumes:
+      - ../gallery:/var/www/html/gallery
+      - ./gallery/gallery.local.conf:/etc/apache2/sites-enabled/gallery.local.conf
+#      - ./gallery/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
+    tty: true
+#  db:
+#    image: mysql:5.7
+#    restart: always
+#    environment:
+#        MYSQL_DATABASE: gallery
+#        MYSQL_ROOT_USER: root
+#        MYSQL_ROOT_PASSWORD: 1
+#    volumes:
+#      - ./data/mysql:/var/lib/mysql
+#    ports:
+#      - "3306:3306"
+  ### PostgreSQL ###########################################
+  db:
+    build: ./gallery/postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=default
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=secret
+
+  ### Redis ################################################
+  redis:
+    build: ./gallery/redis
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+
+  ### pgAdmin ##############################################
+  pgadmin:
+    build: ./gallery/pgadmin
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./data/pgadmin-backup:/var/lib/pgadmin/storage/pgadmin4
+    depends_on:
+      - db
+volumes:
+  datastore: {}
