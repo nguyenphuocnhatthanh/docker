@@ -20,28 +20,28 @@ services:
       - ./gallery/digiidrobe.dev.conf:/etc/apache2/sites-enabled/digiidrobe.local.conf
 #      - ./gallery/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
     tty: true
-#  db:
-#    image: mysql:5.7
-#    restart: always
-#    environment:
-#        MYSQL_DATABASE: gallery
-#        MYSQL_ROOT_USER: root
-#        MYSQL_ROOT_PASSWORD: 1
-#    volumes:
-#      - ./data/mysql:/var/lib/mysql
-#    ports:
-#      - "3306:3306"
-  ### PostgreSQL ###########################################
   db:
-    build: ./gallery/postgres
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    image: mysql:5.7
+    restart: always
     environment:
-      - POSTGRES_DB=default
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=secret
+        MYSQL_DATABASE: gallery
+        MYSQL_ROOT_USER: root
+        MYSQL_ROOT_PASSWORD: 1
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  ### PostgreSQL ###########################################
+#  db:
+#    build: ./gallery/postgres
+#    volumes:
+#      - ./data/postgres:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_DB=default
+#      - POSTGRES_USER=default
+#      - POSTGRES_PASSWORD=secret
 
   ### Redis ################################################
   redis:
@@ -52,12 +52,23 @@ services:
       - "6379:6379"
 
   ### pgAdmin ##############################################
-  pgadmin:
-    build: ./gallery/pgadmin
+#  pgadmin:
+#    build: ./gallery/pgadmin
+#    ports:
+#      - "5050:5050"
+#    volumes:
+#      - ./data/pgadmin-backup:/var/lib/pgadmin/storage/pgadmin4
+#    depends_on:
+#      - db
+  phpmyadmin:
+    build: ./gallery/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=1
+      - MYSQL_ROOT_PASSWORD=1
     ports:
-      - "5050:5050"
-    volumes:
-      - ./data/pgadmin-backup:/var/lib/pgadmin/storage/pgadmin4
+      - "8080:80"
     depends_on:
       - db
 volumes:
