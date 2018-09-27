@@ -12,7 +12,12 @@ services:
       - redis
     volumes:
       - ../gallery:/var/www/html/gallery
+      - ../:/var/www/html
       - ./gallery/gallery.local.conf:/etc/apache2/sites-enabled/gallery.local.conf
+      - ./gallery/feed.local.conf:/etc/apache2/sites-enabled/feed.local.conf
+      - ./gallery/simplesaml.local.conf:/etc/apache2/sites-enabled/simplesaml.local.conf
+      - ./gallery/inject.local.conf:/etc/apache2/sites-enabled/inject.local.conf
+      - ./gallery/digiidrobe.dev.conf:/etc/apache2/sites-enabled/digiidrobe.local.conf
 #      - ./gallery/default-ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf
     tty: true
 #  db:
